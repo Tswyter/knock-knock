@@ -1,0 +1,154 @@
+* {
+  box-sizing: border-box;
+}
+
+.App {
+  text-align: center;
+  font-family: Georgia, serif;
+  color: RGBA(49, 71, 65, 1.00);
+  letter-spacing: 0.02em;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+h1, h2, h3, h4, h5 {
+  margin: 0;
+}
+
+p {
+  margin-top: .75em;
+  margin-bottom: .5em;
+  font-size: 1.1em;
+  line-height: 1.5em;
+  letter-spacing: 0.03em;
+  font-family: Lato, Helvetica, Arial, sans-serif;
+} 
+
+h5 {
+  font-family: Lato, Helvetica, Arial, sans-serif;
+  text-transform: uppercase;
+  font-size: 12px;
+  color: RGBA(49, 71, 65, 0.5);
+  font-weight: 500;
+  letter-spacing: 0.05em
+}
+
+.App-logo {
+  max-height: 80px;
+}
+
+.App-header {
+  padding: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.logo-name {
+  display: flex;
+  flex-direction: row;
+  min-width: 50%;
+  position: relative;
+}
+
+.logo-name img {
+  align-self: center;
+  margin-right: 15px;
+}
+
+.logo-name h2 {
+  font-size: 14px;
+  margin: 0;
+  align-self: center;
+}
+
+.App-title {
+  font-size: 1.5em;
+}
+
+.App-intro {
+  font-size: large;
+}
+
+.hero__wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.hero__item {
+  text-align: left;
+  position: relative;
+}
+
+.hero__item h1 {
+  margin-top: 0;
+}
+
+.hero__item button {
+  margin-top: 20px;
+}
+
+.hero__item:first-child {
+  left: 4vw;
+  top: 4vh;
+  max-width: 50vw;
+}
+
+button {
+  background-color: #111;
+  border: 0 solid transparent;
+  color: #FFF;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 16px;
+  letter-spacing: 0.02em;
+}
+
+button:hover {
+  background-color: #000;
+  cursor: pointer;
+}
+
+.hero__item img.logo {
+  max-height: 90vh;
+  min-width: 650px;
+}
+
+.email-signup {
+  padding: 60px 0;
+  background-color: RGBA(231, 238, 245, 1.00);
+}
+.email-signup h3 {
+  font-size: 20px;
+  margin-bottom: 30px;
+}
+
+.email-signup form {
+  min-height: 40px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.email-signup input {
+  padding: 0 10px;
+  background-color: #FFF;
+  border: 0px solid transparent;
+  border-radius: 5px;
+  margin: 0 5px;
+}
+
+.email-signup input[type="submit"] {
+  background-color: RGBA(49, 71, 65, 1.00);
+  color: #FFF;
+}
