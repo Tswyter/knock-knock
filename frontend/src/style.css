@@ -1,0 +1,43 @@
+h1, p {
+  font-family: Lato;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.modalOpen {
+  display: block;
+  overflow-y: scroll;
+}
+
+.modalClosed {
+  display: none;
+}
+
+.off {
+  display: none;
+}
+
+.on {
+  display: block;
+}
+
+.input {
+  border: 1px solid rgba(0,0,0,0.3);
+  padding: 10px;
+}
+
+.error {
+  color: red;
+}
+
+.success {
+  color: green;
+}
+
+.processing {
+  font-style: italic;
+}
+
