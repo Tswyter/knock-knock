@@ -22,7 +22,7 @@ class Hero extends Component {
         <div className="hero__wrapper" style={heroStyles.wrapper}>
           <div className="hero__item" style={heroStyles.textArea}>
             <img src="./images/IMG_0352-edit2.png" alt="box" />
-            <h1>{this.props.tagline}</h1>
+            <h1>{this.props.tagline} </h1>
             <p>Do you have what it takes to battle deceitful family and ghastly ghosts? Can you survive long enough to become the richest corpse?</p> 
             <p>To find out all you have to do is… <strong><em>Knock</em></strong>.</p>
             <h5>2 &ndash; 4 players | 15 &ndash; 60 minute playtime</h5>
