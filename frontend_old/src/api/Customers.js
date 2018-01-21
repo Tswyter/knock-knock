@@ -1,16 +1,14 @@
 import axios from 'axios';
+import PAYMENT_SERVER_URL from '../constants/server';
 
-const PAYMENT_SERVER_URL = 'http://localhost:8080/';
-
-const customers = {
+export const customers = {
   get: (tokenEmail, data) => 
     axios.get(`${PAYMENT_SERVER_URL}customers/customer?email=${tokenEmail}`, data)
       .then(customer => customer.data)
       .catch(err => console.log(err))
   ,
   create: data => {
-
-    console.log(`CREATING CUSTOMER ${data.email}`, data);
+    console.log(`CREATING CUSTOMER ${data.email}`);
     return axios.post(`${PAYMENT_SERVER_URL}create_customer`, data)
       .then(customer => customer.data)
       .catch(err => console.log(err))
@@ -25,5 +23,3 @@ const customers = {
       .then(customer => customer.data)
       .catch(err => console.log(err))
 };
-
-export default customers;

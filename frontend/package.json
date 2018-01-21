@@ -1,15 +1,19 @@
 {
-  "name": "frontend",
+  "name": "react-yznphw",
+  "description": "",
+  "homepage": "https://stackblitz.com/edit/react-yznphw",
+  "dependencies": {
+    "react": "16.1.1",
+    "react-dom": "16.1.1",
+    "react-scripts": "1.0.10",
+    "axios": "0.17.1",
+    "prop-types": "15.6.0",
+    "react-load-script": "0.0.6",
+    "react-stripe-checkout": "2.6.3",
+    "react-stripe-elements": "1.2.1"
+  },
   "version": "0.1.0",
   "private": true,
-  "dependencies": {
-    "axios": "^0.17.1",
-    "react": "^16.1.1",
-    "react-dom": "^16.1.1",
-    "react-scripts": "1.0.17",
-    "react-stripe-checkout": "^2.6.3",
-    "react-stripe-elements": "^1.2.1"
-  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
