@@ -41,3 +41,23 @@ h1, p {
   font-style: italic;
 }
 
+#orderForm .input {
+  max-width: calc(100% - 10px);
+  display: block;
+  margin-bottom: 10px;
+}
+
+.horizontalInputs {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.horizontalInputs input {
+  flex-grow: 1;
+}
+
+.horizontalInputs .stripeElement {
+  min-width: 50%;
+  background: green;
+}

@@ -30,7 +30,7 @@ class Hero extends Component {
           </div>
           <div className="hero__item" style={heroStyles.textArea}>
             <img className="logo" src={logoVertical} alt="vertical logo" />
-            <ModalButton buttonText="Buy Later" toggleModal={this.props.toggleModal} />
+            {/*<ModalButton buttonText="Buy Later" toggleModal={this.props.toggleModal} />*/}
           </div>
         </div>
       </section>

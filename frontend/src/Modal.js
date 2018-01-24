@@ -4,8 +4,6 @@ import { Elements, StripeProvider }  from 'react-stripe-elements';
 
 const STRIPE_PUBLISHABLE = 'pk_test_acYpsKVm5y1UXmHcdvcdUXyK';
 
-// import './style.css';
-
 const modalBackground = {
   position: 'fixed',
   backgroundColor: 'rgba(0,0,0,0.2)',

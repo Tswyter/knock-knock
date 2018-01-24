@@ -204,19 +204,26 @@ class OrderForm extends Component {
         <form onSubmit={this.formSubmit} id="orderForm" className={this.state.orderStatus === 'takingOrder' ? 'on' : 'off'}>
           <h2>Billing Info</h2>
           {this.state.orderStatus === 'takingOrder' ? <p>{this.state.orderMessage}</p> : ''}
-          <input type="text" placeholder="name" name="billingName" className="input billingName" defaultValue="taylor" required />
-          <input type="email" placeholder="email" name="email" className="input email" defaultValue="testymctester@testingtests.com" required />
+          <div className="horizontalInputs">
+            <input type="text" placeholder="name" name="billingName" className="input billingName" defaultValue="taylor" required />
+            <input type="email" placeholder="email" name="email" className="input email" defaultValue="testymctester@testingtests.com" required />
+          </div>
           <div className="cardInfo">
             <CardNumberElement className="cardNumber input" required />
             <CardExpiryElement className="cardExp input" required />
             <CardCVCElement className="cardCVC input" required />
           </div>
           <div className="billingAddress">
-            <input type="text" placeholder="Street Address" name="billingLine1" className="input billingLine1" defaultValue="90 hartshorn st." required />
-            <input type="text" placeholder="Street Address Line 2" name="billingLine2" className="input billingLine2"  />
-            <input type="text" placeholder="City" name="billingCity" className="input billingCity" defaultValue="reading" required />
-            <input type="text" placeholder="State" name="billingState" className="input billingState" defaultValue="MA" required />
-            <PostalCodeElement className="input billingZip" name="billingZip" required />
+            <div className="horizontalInputs">
+              <input type="text" placeholder="Street Address" name="billingLine1" className="input billingLine1" defaultValue="90 hartshorn st." required />
+              <input type="text" placeholder="Street Address Line 2" name="billingLine2" className="input billingLine2"  />
+            </div>
+            <div className="horizontalInputs">
+              <input type="text" placeholder="City" name="billingCity" className="input billingCity" defaultValue="reading" required />
+              <input type="text" placeholder="State" name="billingState" className="input billingState" defaultValue="MA" required />
+            
+              <PostalCodeElement style={ { minWidth: '100px' } }  className="input billingZip" name="billingZip" required />
+            </div>
           </div>
           <h2>Shipping Info</h2>
           <input type="checkbox" id="difShipping" className="input" onChange={this.toggleShipping} />
