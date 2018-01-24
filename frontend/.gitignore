@@ -5,6 +5,8 @@
 
 # testing
 /coverage
+id_rsa_kk
+backend/Procfile
 
 # production
 /build
