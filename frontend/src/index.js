@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
-import Header from './Header';
+// import Header from './Header';
 import Hero from './Hero';
 import Modal from './Modal';
 import './style.css';
@@ -31,7 +31,7 @@ class App extends Component {
     return (
       <div id="myCanvas">
         <Modal isOpen={this.state.modal} toggleModal={this.toggleModal} />
-        <Header name={this.state.name} />
+        {/*<Header name={this.state.name} />*/}
         <Hero name={this.state.name} tagline={this.state.tagline} toggleModal={this.toggleModal} />
       </div>
     );

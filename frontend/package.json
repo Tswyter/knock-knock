@@ -1,7 +1,7 @@
 {
-  "name": "react-yznphw",
+  "name": "knock-knock-cards",
   "description": "",
-  "homepage": "https://stackblitz.com/edit/react-yznphw",
+  "homepage": "https://www.knockknockcards.com/",
   "dependencies": {
     "react": "16.1.1",
     "react-dom": "16.1.1",

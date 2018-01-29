@@ -6,6 +6,7 @@
 # testing
 /coverage
 id_rsa_kk
+id_rsa_kk.pub
 backend/Procfile
 
 # production

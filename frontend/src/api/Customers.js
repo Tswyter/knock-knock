@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const PAYMENT_SERVER_URL = 'http://localhost:8080/';
+const PAYMENT_SERVER_URL = 'https://murmuring-reef-98489.herokuapp.com/';
 
 const customers = {
   get: (tokenEmail, data) => 
