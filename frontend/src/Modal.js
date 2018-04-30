@@ -1,29 +1,16 @@
 import React, { Component } from 'react';
-import OrderForm from './OrderForm';
+import OrderForm from './OrderFormV3';
 import { Elements, StripeProvider }  from 'react-stripe-elements';
 
+// NEEDS TO BE UPDATED TO LIVE KEY
 const STRIPE_PUBLISHABLE = 'pk_test_acYpsKVm5y1UXmHcdvcdUXyK';
-
-const modalBackground = {
-  position: 'fixed',
-  backgroundColor: 'rgba(0,0,0,0.2)',
-  width: '100vw',
-  height: '100vh'
-};
-
-const modalCard = {
-  backgroundColor: 'white',
-  padding: '20px',
-  maxWidth: '600px',
-  margin: '50px auto'
-};
+// const STRIPE_PUBLISHABLE = 'pk_live_45Q0JAIT6HpONX1ZvPjjhlH8';
 
 class Modal extends Component {
-
   render() {
     return (
-      <div style={modalBackground} onClick={this.props.toggleModal} className={this.props.isOpen ? 'modalOpen modal-control' : 'modalClosed modal-control'}>
-        <div style={modalCard}>
+      <div onClick={this.props.toggleModal} className={this.props.isOpen ? 'modalOpen modal-control' : 'modalClosed modal-control'}>
+        <div className="modal-form">
           <StripeProvider apiKey={STRIPE_PUBLISHABLE}>
             <Elements>
               <OrderForm toggleModal={this.props.toggleModal} />

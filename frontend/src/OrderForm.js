@@ -10,7 +10,7 @@ class OrderForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      difShipping: true,
+      difShipping: false,
       orderStatus: 'takingOrder',
       orderMessage: ''
     };
@@ -49,20 +49,29 @@ class OrderForm extends Component {
   }
 
   chargeOrder(order, data) {
-    orders.charge(order.id, data.id, data)
+    console.log('chargeOrder', order, data);
+    data['receipt_email'] = order.email;
+    orders.charge(order.id, data)
       .then(charge => {
-      console.log('CHARGE', charge);
+      console.log('CHARGE', charge, charge.status);
       
-      if (!charge.statusCode > 200 || order.status === 'paid') {
+      if (charge.status === 'paid') {
         this.submissionResponse({
           status: 'success',
-          message: 'Paying your order with the credit card provided! You should recieve an email soon at ' + data.email
+          message: 'Paying your order with the credit card provided! You should recieve an email soon at ' + order.email
         });
       } else {
         this.submissionResponse({
           status: 'error',
           message: charge.message ? charge.message : 'Something went wrong when charging your card. Please try again later!'
         });
+
+        setTimeout(() => {
+          this.submissionResponse({
+            status: 'takingOrder',
+            message: 'Ooops, something went wrong!'
+          })
+        }, 2500);
       }
 
     })
@@ -71,25 +80,28 @@ class OrderForm extends Component {
 
   formSubmit(e) {
     e.preventDefault();
+    this.submissionResponse({
+      status: 'processing',
+      message: 'Processing your order...'
+    })
     const formData = [].slice.call(e.target.querySelectorAll('.input'));
     const difShipping = formData.filter(input => input.type === 'checkbox')[0].checked;
     const dataFields = formData.filter(input => input.type === 'text' || input.type === 'email');
-    const shipSwitch = difShipping ? 'billing' : 'shipping';
+    const shipSwitch = difShipping ? 'shipping' : 'billing';
 
     const shippingAddress = {
       address: {
-        line1: dataFields.find(input => input.classList.contains(shipSwitch + 'Line1')).value,
-        line2: dataFields.find(input => input.classList.contains(shipSwitch + 'Line2')).value,
-        city: dataFields.find(input => input.classList.contains(shipSwitch + 'City')).value,
-        state: dataFields.find(input => input.classList.contains(shipSwitch + 'State')).value,
-        postal_code: formData.find(input => {
-          return input.classList.contains(shipSwitch + 'Zip');
-        }).value,
+        line1: dataFields.find(input => input.classList.contains(`${shipSwitch}Line1`)).value,
+        line2: dataFields.find(input => input.classList.contains(`${shipSwitch}Line2`)).value,
+        city: dataFields.find(input => input.classList.contains(`${shipSwitch}City`)).value,
+        state: dataFields.find(input => input.classList.contains(`${shipSwitch}State`)).value,
+        postal_code: formData.find(input => input.classList.contains(`${shipSwitch}Zip`)).value,
         country: 'USA'
       },
-      name: dataFields.find(input => input.classList.contains(shipSwitch + 'Name')).value
+      name: dataFields.find(input => input.classList.contains(`${shipSwitch}Name`)).value
     };
     
+
     const apiObjects = {
       token: {
         address_line1: dataFields.find(input => input.classList.contains('billingLine1')).value,
@@ -122,79 +134,77 @@ class OrderForm extends Component {
         shipping: shippingAddress
       }
     };
-    this.props.stripe.createToken(apiObjects.token)
-      .then(token => {
-        console.log('TOKEN', token);
-        const data = token.token;
-        customers.get(data.email)
-          .then(customer => {
-            console.log('CUSTOMER', customer);
-            if (!customer.err && customer.sources.total_count > 0) {
-              this.submissionResponse({
-                status: 'processing',
-                message: 'Customer found!'
-              });
-              apiObjects.order.customer = customer.id;
-              orders.create(apiObjects.order)
-                .then(order => {
-                  console.log('ORDER', order);
-                  if (order.status === 'created') {
-                    this.submissionResponse({
-                      status: 'processing',
-                      message: `Order created!`
-                    });
-                    this.chargeOrder(order, data);
-                  } else {
-                    this.submissionResponse({
-                      status: 'error',
-                      message: order.code === 'out_of_inventory' ? 'Oops, looks like we are out of inventory. Please sign up for email updates!' : order.message ? order.message : 'Something went wrong when creating your order. Please try again later!'
-                    });
-                  }
-                });
-            } else {
-              apiObjects.customer.source = data.id;
+
+    customers.get(apiObjects.token.email)
+      .then(customer => {
+        // get token for customer
+        if (!customer.err) {
+          this.submissionResponse({
+            status: 'processing',
+            message: 'Customer found!'
+          });
+          this.props.stripe.createToken(apiObjects.token)
+          .then(token => {
+            apiObjects.order.customer = customer.id;
+            shippingAddress.address.postal_code = !difShipping ? token.token.card.address_zip : shippingAddress.address.postal_code;
+            console.log(token);
+            orders.create(apiObjects.order)
+              .then(order => {
+                this.chargeOrder(order, token.token.id);
+              })
+              .catch(err => {
+                this.submissionResponse({
+                  status: 'error',
+                  message: 'There was an error creating your order. Please try again.'
+                })
+              })
+          })
+        } else {
+          this.submissionResponse({
+            status: 'processing',
+            message: 'Creating new customer for ' + apiObjects.token.email
+          });
+          this.props.stripe.createToken(apiObjects.token)
+            .then(token => {
+              apiObjects.customer.source = token.token.id;
               customers.create(apiObjects.customer)
                 .then(customer => {
-                  this.submissionResponse({
-                    status: 'processing',
-                    message: 'Customer created!'
-                  });
                   apiObjects.order.customer = customer.id;
+                  shippingAddress.address.postal_code = !difShipping ? token.token.card.address_zip : shippingAddress.address.postal_code;
                   orders.create(apiObjects.order)
                     .then(order => {
-                      if (!order.err) {
-                        console.log('ORDER', order, token);
-                        this.submissionResponse({
-                          status: 'processing',
-                          message: 'Order created!'
-                        });
-                        this.chargeOrder(order, data);
-                      } else {
-                        this.submissionResponse({
-                          status: 'error',
-                          message: order.message ? order.message : 'Something went wrong creating your order.'
-                        });
-                      }
+                      this.props.stripe.createToken(apiObjects.token)
+                        .then(token => {
+                          this.chargeOrder(order, token.token.id);
+                        })
+                        .catch(err => this.submissionResponse({ status: 'error', message: err.message }))
                     })
+                    .catch(err => {
+                      this.submissionResponse({
+                        status: 'error',
+                        message: err.message
+                      });
+                    });
                 })
-                .catch(err => this.submissionResponse({
-                  status: 'error',
-                  message: 'Issue creating a customer.'
-                }));
-            }        
-          })
-          .catch(err => this.submissionResponse({
-            status: 'error',
-            message: 'Oh no!'
-          }));
-      })
-      .catch(err => {
-        console.log(err);
+                .catch(err => {
+                  this.submissionResponse({
+                    status: 'error',
+                    message: err.message
+                  })
+                });
+            })
+            .catch(err => {
+              this.submissionResponse({
+                status: 'error',
+                message: err.message
+              });
+            });
+        }
+      }).catch(err => {
         this.submissionResponse({
           status: 'error',
-          message: 'Something went wrong!'
+          message: err.message
         });
-        setTimeout(() => this.submissionResponse({ status: 'takingOrder', message: 'There was something wrong with the form. Try again!' }), 2000);
       });
   }
 
@@ -205,8 +215,8 @@ class OrderForm extends Component {
           <h2>Billing Info</h2>
           {this.state.orderStatus === 'takingOrder' ? <p>{this.state.orderMessage}</p> : ''}
           <div className="horizontalInputs">
-            <input type="text" placeholder="name" name="billingName" className="input billingName" defaultValue="taylor" required />
-            <input type="email" placeholder="email" name="email" className="input email" defaultValue="testymctester@testingtests.com" required />
+            <input type="text" placeholder="name" name="billingName" className="input billingName" required />
+            <input type="email" placeholder="email" name="email" className="input email" required />
           </div>
           <div className="cardInfo">
             <CardNumberElement className="cardNumber input" required />
@@ -215,30 +225,35 @@ class OrderForm extends Component {
           </div>
           <div className="billingAddress">
             <div className="horizontalInputs">
-              <input type="text" placeholder="Street Address" name="billingLine1" className="input billingLine1" defaultValue="90 hartshorn st." required />
+              <input type="text" placeholder="Street Address" name="billingLine1" className="input billingLine1" required />
               <input type="text" placeholder="Street Address Line 2" name="billingLine2" className="input billingLine2"  />
             </div>
             <div className="horizontalInputs">
-              <input type="text" placeholder="City" name="billingCity" className="input billingCity" defaultValue="reading" required />
-              <input type="text" placeholder="State" name="billingState" className="input billingState" defaultValue="MA" required />
+              <input type="text" placeholder="City" name="billingCity" className="input billingCity" required />
+              <input type="text" placeholder="State" name="billingState" className="input billingState" required />
             
               <PostalCodeElement style={ { minWidth: '100px' } }  className="input billingZip" name="billingZip" required />
             </div>
           </div>
           <h2>Shipping Info</h2>
           <input type="checkbox" id="difShipping" className="input" onChange={this.toggleShipping} />
+
           <label htmlFor="difShipping">
             Same as Billing
           </label>
           <div className={this.state.difShipping ? 'shippingAddress on' : 'shippingAddress off'}>
-            <input type="text" placeholder="name" name="shippingName" className="input shippingName" defaultValue="someone else" />
-            <input type="text" placeholder="Street Address" name="shippingLine1" className="input shippingLine1" defaultValue="3231 washington st." />
-            <input type="text" placeholder="Street Address" name="shippingLine2" className="input shippingLine2" />
-            <input type="text" placeholder="City" name="shippingCity" className="input shippingCity" defaultValue="jamaica plain" />
-            <input type="text" placeholder="State" name="shippingState" className="input shippingState" defaultValue="Massachusetts" />
-            <input type="text" placeholder="Zip" name="shippingZip" className="input shippingZip" defaultValue="02198" />
+            <input type="text" placeholder="name" name="shippingName" className="input shippingName" />
+            <div className="horizontalInputs">
+              <input type="text" placeholder="Street Address" name="shippingLine1" className="input shippingLine1" />
+              <input type="text" placeholder="Street Address" name="shippingLine2" className="input shippingLine2" />
+            </div>
+            <div className="horizontalInputs">
+              <input type="text" placeholder="City" name="shippingCity" className="input shippingCity" />
+              <input type="text" placeholder="State" name="shippingState" className="input shippingState" />
+              <input type="text" placeholder="Zip" name="shippingZip" className="input shippingZip" />
+            </div>
           </div>
-          <input type="submit" defaultValue="submit" />
+          <input type="submit" defaultValue="Submit Payment" />
         </form>
         <div className={this.state.orderStatus === 'error' ? 'error on' : 'error off'}>
           {this.state.orderMessage}

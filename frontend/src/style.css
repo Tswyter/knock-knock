@@ -1,63 +1,355 @@
-h1, p {
-  font-family: Lato;
-}
-
-* {
-  margin: 0;
+body {
+  font-size: 16px;
+  line-height: 1.5rem;
   padding: 0;
-}
-
-.modalOpen {
-  display: block;
-  overflow-y: scroll;
-}
-
-.modalClosed {
-  display: none;
-}
-
-.off {
-  display: none;
+  margin: 0;
+  font-family: Georgia;
 }
 
 .on {
   display: block;
 }
 
-.input {
-  border: 1px solid rgba(0,0,0,0.3);
+.off {
+  display: none;
+}
+
+/*body.freeze {
+  overflow: hidden;
+}*/
+
+h1, h2, h3, h4, h5, h6, p {
+  margin: 15px 0 0;
+}
+
+.mobile-images {
+  display: none;
+}
+
+.slider {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+.slider img {
+  width: 100%;
+  position: relative;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  object-fit: cover;
+  height: 100vh;
+}
+
+.hero {
+  position: absolute;
+  top: 50px;
+  left: 50px;
+  max-width: 400px;
+  background-color: #FFF;
+  border-radius: 4px;
+  z-index: 100;
+  padding: 40px;
+  box-shadow: 0px 5px 10px rgba(0,0,0,0.5);
+  margin-bottom: 30px;
+}
+
+.hero__text-container > img {
+  max-height: 150px;
+  max-width: 200px;
+  text-align: left;
+}
+
+.hero__button {
+  display: flex;
+  flex-direction: row;
+  text-align: center;
+  margin-top: 30px;
+}
+
+button, input[type="submit"] {
+  background-color: #111;
+  color: #FFF;
+  padding: 20px 30px;
+  font-size: 18px;
+  text-transform: uppsercase;
+  border-radius: 4px;
+}
+
+/* PRODUCT INFO */
+.product-info {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  border-top: 2px solid #ededed;
+  border-bottom: 2px solid #ededed;
+  padding: 30px 0;
+}
+
+.product-info ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.product-info ul li {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.product-info__details {
+  max-width: 75%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.product-info__image {
+  max-width: 400px;
+  margin-right: 30px;
+}
+
+.product-info__image img {
+  max-width: 100%;
+}
+
+.product-info__text {
+  font-size: 14px;
+}
+
+.product-info__text p {
+  line-height: 1.45em;
+}
+
+.product-info__pricing {
+  text-align: right;
+  align-self: flex-end;
+}
+
+.product-info__pricing select {
+  font-size: 20px;
+  margin-top: 15px;
+  border: 0px;
+  box-shadow: 0px 0px 5px rgba(0,0,0,0.25);
+}
+
+/* MODAL STYLES */
+.modal-control {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: rgba(0,0,0,0.25);
+  z-index: 1;
+  opacity: 0;
+  transition: 0.3s ease-in-out;
+  overflow-y: scroll;
+}
+
+.modal-control.modalOpen {
+  opacity: 1;
+  z-index: 200;
+}
+
+.modal-control .modal-form {
+  width: 800px;
+  max-width: 100vw;
+  background-color: #FFF;
+  border-radius: 4px;
+  margin: 0 auto;
+  padding: 30px;
+  box-sizing: border-box;
+  margin-top: 30px;
+  position: relative;
+  transform: translateY(-30px);
+  transition: 0.3s ease-in-out;
+  box-shadow: 0px 0px 5px rgba(0,0,0,0.25);
+  margin-bottom: 30px;
+}
+
+.modal-control .modal-form h3 {
+  margin-top: 0px;
+  font-size: 20px;
+}
+
+.modal-control .modal-form h3 + p {
+  margin-top: 10px;
+}
+
+.modal-control.modalOpen .modal-form {
+  transform: translateY(0px);
+}
+
+/* billing info */
+.input-row {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 15px;
+}
+.input-row label {
+  margin: 0 5px;
+  font-size: 0.55rem;
+  line-height: 1.25rem;
+  text-transform: uppercase;
+  font-family: Helvetica, Arial, sans-serif
+}
+
+.input-row label:first-child {
+  margin-left: 0;
+}
+
+.input-row label:last-child {
+  margin-right: 0;
+}
+
+.input-row input, .input-row .input {
+  flex-grow: 1;
   padding: 10px;
+  font-size: 14px;
+  border: 1px solid #dedede;
+  margin: 0 5px;
+  border-radius: 3px;
 }
 
-.error {
-  color: red;
+.input-row input:first-child, .input-row .input:first-child {
+  margin-left: 0px;
 }
 
-.success {
-  color: green;
+.input-row input:last-child, .input-row .input:last-child {
+  margin-right: 0px;
 }
 
-.processing {
-  font-style: italic;
+.stripe-card {
+  min-width: 60%;
 }
 
-#orderForm .input {
-  max-width: calc(100% - 10px);
-  display: block;
+.shipping-details {
+  border-top: 2px solid #dedede;
+  padding-top: 30px;
+  margin-top: 30px;
+}
+
+.shipping-details h3 {
+  margin-top: 0px;
   margin-bottom: 10px;
 }
 
-.horizontalInputs {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
+.shipping-details input[type="checkbox"] {
+  display: none;
 }
 
-.horizontalInputs input {
-  flex-grow: 1;
+.shipping-details > label {
+  margin-bottom: 30px;
+  font-size: 16px;
+  display: block;
+  position: relative;
+  left: 25px;
 }
 
-.horizontalInputs .stripeElement {
-  min-width: 50%;
-  background: green;
+.shipping-details > label:before {
+  content: '\2714';
+  font-size: .5rem;
+  text-align: center;
+  line-height: 1rem;
+  color: #FFF;
+  left: -25px;
+  top: 3px;
+  position: absolute;
+  width: 1rem;
+  height: 1rem;
+  background: #000;
+  border-radius: 3px;
+}
+
+.shipping-details input[type="checkbox"]:checked ~ label:before {
+  content: '';
+  background: #cdcdcd;
+}
+
+.shipping-details input[type="checkbox"] ~ .shipping-info {
+  display: none;
+  margin-bottom: 30px;
+}
+
+.shipping-details input[type="checkbox"]:checked ~ .shipping-info {
+  display: block;
+}
+
+@media screen and (max-width: 767px) {
+  .input-row label {
+    margin: 0px
+  }
+  .mobile-images {
+    display: block;
+    margin-top: 80px;
+  }
+
+  .mobile-images ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .mobile-images ul li {
+    margin-bottom: 30px;
+  }
+
+  .mobile-images ul li img {
+    min-width: 100%;
+    max-width: 100%;
+    width: 100%;
+    border-radius: 4px;
+  }
+
+  .hero {
+    position: relative;
+    left: 0;
+    top: 0;
+    border-radius: 0px;
+    max-width: 100%;
+  }
+
+  .modal-control {
+    max-height: auto;
+    height: auto;
+    min-height: 100%;
+    padding-top: 25px;
+    position: absolute;
+  }
+
+  .modal-control .modal-form {
+    margin-bottom: 50px;
+  }
+
+  .modal-control:before {
+    content: 'BACK';
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    z-index: 1000;
+    font-family: Helvetica, Arial, sans-serif;
+    font-weight: 800;
+  }
+
+  .product-info__image {
+    display: none;
+  }
+
+  .input-row {
+    flex-direction: column;
+    margin-bottom: 0;
+  }
+
+  .input-row input, .input-row .input {
+    margin: 0;
+    margin-bottom: 20px;
+    padding: 15px 10px;
+  }
 }

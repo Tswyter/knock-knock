@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
-import Header from './Header';
+// import Header from './Header';
 import Hero from './Hero';
 import Modal from './Modal';
+import Slider from './Slider';
 import './style.css';
 
 class App extends Component {
@@ -21,8 +22,10 @@ class App extends Component {
   toggleModal(e) {
     if (this.state.modal && e.target.classList.contains('modal-control')) {
       this.setState({ modal: false });
+      document.body.classList.remove('freeze');
     } else {
       this.setState({ modal: true });
+      document.body.classList.add('freeze');
     }
     return this.state.modal;
   }
@@ -31,8 +34,8 @@ class App extends Component {
     return (
       <div id="myCanvas">
         <Modal isOpen={this.state.modal} toggleModal={this.toggleModal} />
-        <Header name={this.state.name} />
         <Hero name={this.state.name} tagline={this.state.tagline} toggleModal={this.toggleModal} />
+        <Slider />
       </div>
     );
   }
