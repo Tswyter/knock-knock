@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const PAYMENT_SERVER_URL = 'https://murmuring-reef-98489.herokuapp.com/';
+// const PAYMENT_SERVER_URL = 'https://murmuring-reef-98489.herokuapp.com/';
+const PAYMENT_SERVER_URL = '//localhost:8080/';
 
 const customers = {
   get: (tokenEmail, data) => 
@@ -9,7 +10,6 @@ const customers = {
       .catch(err => console.log(err))
   ,
   create: data => {
-
     console.log(`CREATING CUSTOMER ${data.email}`, data);
     return axios.post(`${PAYMENT_SERVER_URL}create_customer`, data)
       .then(customer => customer.data)

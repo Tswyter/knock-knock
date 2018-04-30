@@ -10,7 +10,7 @@ class OrderForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      difShipping: true,
+      difShipping: false,
       orderStatus: 'takingOrder',
       orderMessage: ''
     };
@@ -49,21 +49,29 @@ class OrderForm extends Component {
   }
 
   chargeOrder(order, data) {
-    const { id: token } = data;
-    orders.charge(order.id, token, data)
+    console.log('chargeOrder', order, data);
+    data['receipt_email'] = order.email;
+    orders.charge(order.id, data)
       .then(charge => {
       console.log('CHARGE', charge, charge.status);
       
       if (charge.status === 'paid') {
         this.submissionResponse({
           status: 'success',
-          message: 'Paying your order with the credit card provided! You should recieve an email soon at ' + data.email
+          message: 'Paying your order with the credit card provided! You should recieve an email soon at ' + order.email
         });
       } else {
         this.submissionResponse({
           status: 'error',
           message: charge.message ? charge.message : 'Something went wrong when charging your card. Please try again later!'
         });
+
+        setTimeout(() => {
+          this.submissionResponse({
+            status: 'takingOrder',
+            message: 'Ooops, something went wrong!'
+          })
+        }, 2500);
       }
 
     })
@@ -72,25 +80,28 @@ class OrderForm extends Component {
 
   formSubmit(e) {
     e.preventDefault();
+    this.submissionResponse({
+      status: 'processing',
+      message: 'Processing your order...'
+    })
     const formData = [].slice.call(e.target.querySelectorAll('.input'));
     const difShipping = formData.filter(input => input.type === 'checkbox')[0].checked;
     const dataFields = formData.filter(input => input.type === 'text' || input.type === 'email');
-    const shipSwitch = difShipping ? 'billing' : 'shipping';
+    const shipSwitch = difShipping ? 'shipping' : 'billing';
 
     const shippingAddress = {
       address: {
-        line1: dataFields.find(input => input.classList.contains(shipSwitch + 'Line1')).value,
-        line2: dataFields.find(input => input.classList.contains(shipSwitch + 'Line2')).value,
-        city: dataFields.find(input => input.classList.contains(shipSwitch + 'City')).value,
-        state: dataFields.find(input => input.classList.contains(shipSwitch + 'State')).value,
-        postal_code: formData.find(input => {
-          return input.classList.contains(shipSwitch + 'Zip');
-        }).value,
+        line1: dataFields.find(input => input.classList.contains(`${shipSwitch}Line1`)).value,
+        line2: dataFields.find(input => input.classList.contains(`${shipSwitch}Line2`)).value,
+        city: dataFields.find(input => input.classList.contains(`${shipSwitch}City`)).value,
+        state: dataFields.find(input => input.classList.contains(`${shipSwitch}State`)).value,
+        postal_code: formData.find(input => input.classList.contains(`${shipSwitch}Zip`)).value,
         country: 'USA'
       },
-      name: dataFields.find(input => input.classList.contains(shipSwitch + 'Name')).value
+      name: dataFields.find(input => input.classList.contains(`${shipSwitch}Name`)).value
     };
     
+
     const apiObjects = {
       token: {
         address_line1: dataFields.find(input => input.classList.contains('billingLine1')).value,
@@ -123,79 +134,77 @@ class OrderForm extends Component {
         shipping: shippingAddress
       }
     };
-    this.props.stripe.createToken(apiObjects.token)
-      .then(token => {
-        console.log('TOKEN', token);
-        const data = token.token;
-        customers.get(data.email)
-          .then(customer => {
-            console.log('CUSTOMER', customer);
-            if (!customer.err && customer.sources.total_count > 0) {
-              this.submissionResponse({
-                status: 'processing',
-                message: 'Customer found!'
-              });
-              apiObjects.order.customer = customer.id;
-              orders.create(apiObjects.order)
-                .then(order => {
-                  console.log('ORDER', order);
-                  if (order.status === 'created') {
-                    this.submissionResponse({
-                      status: 'processing',
-                      message: `Order created!`
-                    });
-                    this.chargeOrder(order, data);
-                  } else {
-                    this.submissionResponse({
-                      status: 'error',
-                      message: order.code === 'out_of_inventory' ? 'Oops, looks like we are out of inventory. Please sign up for email updates!' : order.message ? order.message : 'Something went wrong when creating your order. Please try again later!'
-                    });
-                  }
-                });
-            } else {
-              apiObjects.customer.source = data.id;
+
+    customers.get(apiObjects.token.email)
+      .then(customer => {
+        // get token for customer
+        if (!customer.err) {
+          this.submissionResponse({
+            status: 'processing',
+            message: 'Customer found!'
+          });
+          this.props.stripe.createToken(apiObjects.token)
+          .then(token => {
+            apiObjects.order.customer = customer.id;
+            shippingAddress.address.postal_code = !difShipping ? token.token.card.address_zip : shippingAddress.address.postal_code;
+            console.log(token);
+            orders.create(apiObjects.order)
+              .then(order => {
+                this.chargeOrder(order, token.token.id);
+              })
+              .catch(err => {
+                this.submissionResponse({
+                  status: 'error',
+                  message: 'There was an error creating your order. Please try again.'
+                })
+              })
+          })
+        } else {
+          this.submissionResponse({
+            status: 'processing',
+            message: 'Creating new customer for ' + apiObjects.token.email
+          });
+          this.props.stripe.createToken(apiObjects.token)
+            .then(token => {
+              apiObjects.customer.source = token.token.id;
               customers.create(apiObjects.customer)
                 .then(customer => {
-                  this.submissionResponse({
-                    status: 'processing',
-                    message: 'Customer created!'
-                  });
                   apiObjects.order.customer = customer.id;
+                  shippingAddress.address.postal_code = !difShipping ? token.token.card.address_zip : shippingAddress.address.postal_code;
                   orders.create(apiObjects.order)
                     .then(order => {
-                      if (!order.err) {
-                        console.log('ORDER', order, token);
-                        this.submissionResponse({
-                          status: 'processing',
-                          message: 'Order created!'
-                        });
-                        this.chargeOrder(order, data);
-                      } else {
-                        this.submissionResponse({
-                          status: 'error',
-                          message: order.message ? order.message : 'Something went wrong creating your order.'
-                        });
-                      }
+                      this.props.stripe.createToken(apiObjects.token)
+                        .then(token => {
+                          this.chargeOrder(order, token.token.id);
+                        })
+                        .catch(err => this.submissionResponse({ status: 'error', message: err.message }))
                     })
+                    .catch(err => {
+                      this.submissionResponse({
+                        status: 'error',
+                        message: err.message
+                      });
+                    });
                 })
-                .catch(err => this.submissionResponse({
-                  status: 'error',
-                  message: 'Issue creating a customer.'
-                }));
-            }        
-          })
-          .catch(err => this.submissionResponse({
-            status: 'error',
-            message: 'Oh no!'
-          }));
-      })
-      .catch(err => {
-        console.log(err);
+                .catch(err => {
+                  this.submissionResponse({
+                    status: 'error',
+                    message: err.message
+                  })
+                });
+            })
+            .catch(err => {
+              this.submissionResponse({
+                status: 'error',
+                message: err.message
+              });
+            });
+        }
+      }).catch(err => {
         this.submissionResponse({
           status: 'error',
-          message: 'Something went wrong!'
+          message: err.message
         });
-        setTimeout(() => this.submissionResponse({ status: 'takingOrder', message: 'There was something wrong with the form. Try again!' }), 2000);
       });
   }
 
