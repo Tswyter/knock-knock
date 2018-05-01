@@ -35,8 +35,8 @@ export default class Card extends Component {
           <h5>For All Ages | 2 &ndash; 4 players | 15 &ndash; 60 minute playtime</h5>
           <div className="hero__button">
             <div>
-              <ModalButton buttonText="Pre-Order Now" toggleModal={this.props.toggleModal} />
-              <p>Available May 1st</p>
+              <ModalButton buttonText="Buy Now" toggleModal={this.props.toggleModal} />
+              {/*<p>Now Available!</p>*/}
             </div>
             <a target="_blank" rel="noopener noreferrer" href="https://knockknockcards.com/rules/knock-knock-rule-booklet.pdf" style={{ padding: '15px', alignSelf: 'flex-start', fontSize: '1em' }}>Rule Book</a>
           </div>
