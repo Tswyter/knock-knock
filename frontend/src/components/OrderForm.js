@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import { CardNumberElement, CardExpiryElement, CardCVCElement, PostalCodeElement, injectStripe } from 'react-stripe-elements';
-import Input from './Input';
+import Input from './form/Input';
+import AddressInputs from './form/Address';
 
-import orders from './api/orders';
-
-import './style.css';
+import orders from '../api/orders';
 
 class OrderForm extends Component {
   constructor(props) {
@@ -136,8 +135,8 @@ class OrderForm extends Component {
   render() {
     return (
       <div>
-        <h3>Pre-Order Today</h3>
-        <p>Knock Knock will ship out on May 1st.</p>
+        <h3>Buy Knock Knock Today</h3>
+        {/*<p>Knock Knock will ship out on May 1st.</p>*/}
         <div className="product-info">
           <ul>
             <li>
@@ -198,20 +197,8 @@ To find out all you have to do is…knock!</p>
             <div className="input-row">
               <Input name="Name" id="orderBillingName" type="text" placeholder="name" handleChange={this.handleInput} required />
               <Input name="Email" id="orderBillingEmail" type="email" placeholder="Email Address" handleChange={this.handleInput} required />
-              {/*<input type="text" placeholder="name" onChange={e => this.handleInput('orderBillingName', e.target.value)} required />*/}
-              {/*<input type="email" placeholder="Email Address" onChange={e => this.handleInput('orderBillingEmail', e.target.value)} required />*/}
             </div>
-            <div className="input-row">
-              <Input type="text" placeholder="Address 1" name="Address Line 1" handleChange={this.handleInput} id="orderBillingAddress1" required />
-              {/*<input type="text" placeholder="Address 1" onChange={e => this.handleInput('orderBillingAddress1', e.target.value)} required />*/}
-              <Input type="text" placeholder="Address 2" name="Address Line 2" handleChange={this.handleInput} id="orderBillingAddress2" />
-            </div>
-            <div className="input-row">
-              <Input type="text" placeholder="City" name="City" handleChange={this.handleInput} id="orderBillingCity" required />
-              <Input type="text" placeholder="State" name="State" handleChange={this.handleInput} id="orderBillingState" required />
-              <Input type="text" placeholder="01234" name="Zip Code" handleChange={this.handleInput} id="orderBillingZip" required />
-              {/*<PostalCodeElement style={ { maxWidth: '100px' } }  className="input billingZip" name="billingZip" onChange={e => this.handleInput('orderBillingZip', e.value)} required />*/}
-            </div>
+            <AddressInputs type="Billing" handleInput={this.handleInput} />
             <div className="shipping-details">
               <h3>Shipping Info</h3>
               <input type="checkbox" defaultChecked={this.state.shippingCheckbox} id="shippingCheckbox" onChange={e => this.handleInput('shippingCheckbox', e.target.checked )} />
@@ -221,21 +208,8 @@ To find out all you have to do is…knock!</p>
               <div className="shipping-info">
                 <div className="input-row">
                   <Input name="Name" id="orderShippingName" type="text" placeholder="name" handleChange={this.handleInput} />
-                  {/*<Input name="Email" id="orderBilllingEmail" type="email" placeholder="Email Address" handleChange={this.handleInput} />*/}
-                  {/*<input type="text" placeholder="name" onChange={e => this.handleInput('orderBillingName', e.target.value)} required />*/}
-                  {/*<input type="email" placeholder="Email Address" onChange={e => this.handleInput('orderBillingEmail', e.target.value)} required />*/}
                 </div>
-                <div className="input-row">
-                  <Input type="text" placeholder="Address 1" name="Address Line 1" handleChange={this.handleInput} id="orderShippingAddress1" />
-                  {/*<input type="text" placeholder="Address 1" onChange={e => this.handleInput('orderBillingAddress1', e.target.value)} required />*/}
-                  <Input type="text" placeholder="Address 2" name="Address Line 2" handleChange={this.handleInput} id="orderShippingAddress2" />
-                </div>
-                <div className="input-row">
-                  <Input type="text" placeholder="City" name="City" handleChange={this.handleInput} id="orderShippingCity" />
-                  <Input type="text" placeholder="State" name="State" handleChange={this.handleInput} id="orderShippingState" />
-                  <Input type="text" placeholder="01234" name="Zip Code" handleChange={this.handleInput} id="orderShippingZip" />
-                  {/*<PostalCodeElement style={ { maxWidth: '100px' } }  className="input billingZip" name="billingZip" onChange={e => this.handleInput('orderBillingZip', e.value)} required />*/}
-                </div>
+                <AddressInputs type="Shipping" handleInput={this.handleInput} />
               </div>
             </div>
             <input type="submit" value="Submit" />

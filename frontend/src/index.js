@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
 // import Header from './Header';
-import Hero from './Hero';
-import Modal from './Modal';
-import Slider from './Slider';
-import './style.css';
+import Hero from './components/Hero';
+import Modal from './components/Modal';
+import Slider from './components/Slider';
+import './styles/style.css';
 
 class App extends Component {
   constructor() {
